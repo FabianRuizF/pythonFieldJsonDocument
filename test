@@ -1,0 +1,107 @@
+import csv
+import json
+
+# Definition of the original dictionary with field34
+bigDict = {
+    "Names": [
+        {"name": "Ana", "age": 25, "city": "Madrid"},
+        {"name": "Carlos", "age": 30, "city": "Barcelona"}
+    ],
+    "Product": [
+        {"data": 100, "model": "XFW44", "ID": "011123"},
+        {"data": 10, "model": "XW44", "ID": "0123"}
+    ],
+    "Dummy":
+        {"field34": "random1", "field2": 11}
+}
+
+def display_csv_content(filename, data):
+    """
+    Displays the content of the CSV in the terminal with the actual data.
+
+    Args:
+        filename (str): Name of the CSV file
+        data (dict or list): Data to process
+    """
+    print(f"\n=== Content of {filename}.csv ===")
+
+    # If it is a list, we take the first element to get the keys and values
+    if isinstance(data, list):
+        if not data:  # Verify if the list is empty
+            return
+        first_element = data[0]
+        keys = first_element.keys()
+
+        # Show headers
+        print("Columnas,Tipo,Descripcion")
+
+        # Show each key with its corresponding value
+        for key in keys:
+            data_type = 'String'  # By default, everything is String
+            value = str(first_element[key])
+
+            # Determine the type based on the value
+            if isinstance(first_element[key], int):
+                data_type = 'Integer'
+            elif isinstance(first_element[key], float):
+                data_type = 'Float'
+
+            print(f"{value},{data_type},\"\"")
+    else:
+        # For simple dictionaries (like Dummy)
+        keys = data.keys()
+        print("Columnas,Tipo,Descripcion")
+
+        for key in keys:
+            data_type = 'String'
+            value = str(data[key])
+
+            if isinstance(data[key], int):
+                data_type = 'Integer'
+            elif isinstance(data[key], float):
+                data_type = 'Float'
+
+            print(f"{value},{data_type},\"\"")
+
+def write_to_csv(filename, data):
+    """
+    Writes the data to a CSV file.  Modified to write keys as rows with 'Columnas', 'Tipo', 'Descripcion'.
+
+    Args:
+        filename (str): Name of the CSV file to create.
+        data (list or dict): The data to write in the CSV file.
+    """
+    with open(f"{filename}.csv", 'w', newline='', encoding='utf-8') as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerow(['Columnas', 'Tipo', 'Descripcion'])  # Write the header row
+
+        if isinstance(data, list):
+            if not data:
+                return
+            first_element = data[0]
+            for key, value in first_element.items():
+                data_type = 'String'
+                if isinstance(value, int):
+                    data_type = 'Integer'
+                elif isinstance(value, float):
+                    data_type = 'Float'
+                writer.writerow([key, data_type, ""])  # Write key, type, and description
+
+        elif isinstance(data, dict):
+            for key, value in data.items():
+                data_type = 'String'
+                if isinstance(value, int):
+                    data_type = 'Integer'
+                elif isinstance(value, float):
+                    data_type = 'Float'
+                writer.writerow([key, data_type, ""])
+
+# Display the content of each file in the terminal
+display_csv_content('Names', bigDict['Names'])
+display_csv_content('Product', bigDict['Product'])
+display_csv_content('Dummy', bigDict['Dummy'])
+
+# Write the data to CSV files
+write_to_csv('Names', bigDict['Names'])
+write_to_csv('Product', bigDict['Product'])
+write_to_csv('Dummy', bigDict['Dummy'])
